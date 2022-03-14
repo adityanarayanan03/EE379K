@@ -29,9 +29,9 @@
 \maketitle
 
 \section{Problem Description}
-The human-computer interface behind many modern video games, using either handheld 
-joystick controllers or keyboard and mouse input, is an example
-of a typical human input device for computers, monitors, televisions, etc. There are two 
+The human-computer interface behind many modern video games, uses either handheld 
+joystick controllers or keyboard and mouse input, which are examples
+of typical human input device for computers, monitors, televisions, etc. There are two 
 major drawbacks to traditional human input systems that are often overlooked: the input needed 
 to achieve a certain effect has little to no correspondence to a physically-intuitive set 
 of motions, and more importantly, inputs are heavily dependent on the user's fine motor skills. 
@@ -39,8 +39,8 @@ Fine motor skills used to interact with modern technology are heavily affected b
 as muscular coordination disorders and old age. Computer vision, particularly the processes 
 of motion tracking and human pose estimation, may allow us to create human-computer interfaces 
 that link effect to physically-intuitive human motion inputs with little dependence on 
-fine motor ability. We propose a vision-based computer-input system that maps gestures and 
-motion of the user's body into computer input. We propose a car-racing simulator as a test 
+fine motor ability or additional physical input devices. We propose a vision-based computer-input system that maps gestures and 
+motion of the user's body into computer input. We also propose a car-racing simulator as a test 
 subject for our system, and aim to intuitively control the motion of a player's virtual car 
 with human body motion as the only action. Such a system would be instrumental in improving 
 the accessibility of modern technology, with implementations far beyond the scope of computer 
@@ -58,7 +58,7 @@ Pose Estimation or the ability to properly:
 \end{itemize}
 
 The area of Human Pose Estimation is widely studied. Robust, optimized solutions exist 
-that can help us with this step. One popular solution is derived from \cite{8765346}, and 
+that can help us with this step. One popular solution is derived from \cite{8765346} which uses Part Affinity Fields (PAFs) to learn to assosciate body parts with individuals in the image, and 
 open-source code for the so called openpose library shows promising results for real-time 
 human body segmentation. 
 
@@ -122,7 +122,7 @@ more specifically below:
     \item Week 0: Configure openpose to identify feature points from front and/or side cameras.
     \item Week 1: Perform any necessary optimizations to run openpose with as low latency as possible.
     \item Week 2: Finalize the set of trackable and detectable gestures, and map each one to a particular keyboard mapping in a physically-intuitive way.
-    \item Week 3-4: Implement a feature tracking system, and confirm that each gesture accurately corresponds to a specific function with sufficient accuracy.
+    \item Week 3-4: Implement a real-time feature tracking system, and confirm that each gesture accurately corresponds to a specific function with sufficient accuracy.
     \item Week 5: Interface detections with video game.
     \item Week 6: Optimize vision video game interaction for low latency.
     \item Week 7: Write paper describing project methodology, and explore future works inspired by this project.
