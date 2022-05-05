@@ -3,6 +3,8 @@ import jetson.utils
 
 import numpy as np
 
+#pynput library for simulating keypresses
+#Controller() object for emulating keyboard
 from pynput.keyboard import Key, Controller
 keyboard = Controller()
 
@@ -14,6 +16,7 @@ import time
 net = jetson.inference.poseNet("resnet18-body", argv=["--log-level=error", f"--threshold={.15}"])
 
 # create video sources & outputs
+#/dev/video0 for USB Camera
 cameraStream = jetson.utils.videoSource("/dev/video0")
 output = jetson.utils.videoOutput("display://0")
 
