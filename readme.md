@@ -1,4 +1,4 @@
-##Human Pose Estimation Based Controller for Video Games
+## Human Pose Estimation Based Controller for Video Games
 
 Our project implements simple and intuitive motion controls for video games using two examples: a simple car racing game, and the Google Chrome No-Internet Dinosaur game. 
 
