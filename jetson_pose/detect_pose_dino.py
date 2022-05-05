@@ -1,31 +1,5 @@
-#!/usr/bin/python3
-#
-# Copyright (c) 2021, NVIDIA CORPORATION. All rights reserved.
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-#
-
 import jetson.inference
 import jetson.utils
-
-import argparse
-import sys
 
 import numpy as np
 
@@ -35,11 +9,12 @@ keyboard = Controller()
 import matplotlib.pyplot as plt
 import time
 
-# load the pose estimation model
+# load the pose estimation model. The first time this runs it will 
+# Take some time to optimize the model for jetson TRT inference.
 net = jetson.inference.poseNet("resnet18-body", argv=["--log-level=error", f"--threshold={.15}"])
 
 # create video sources & outputs
-input = jetson.utils.videoSource("/dev/video0")
+cameraStream = jetson.utils.videoSource("/dev/video0")
 output = jetson.utils.videoOutput("display://0")
 
 # process frames until the user exits
@@ -52,23 +27,25 @@ prev_3_loc_index = 0
 THRESHOLD = 10 #px
 while (1):
     # capture the next image
-    img = input.Capture()
+    img = cameraStream.Capture()
 
-    # perform pose estimation (with overlay)
+    # perform pose estimation (with point overlay)
     poses = net.Process(img, overlay='keypoints')
 
-    # print the pose results
-    # print("detected {:d} objects in image".format(len(poses)))
-
-    #print(poses)
-
     #Each pose corresponds to one human detection
+    #We only want to process the pose(s) if there's only one human
     if len(poses) > 0:
         pose = poses[0]
 
-
+        #Lists to track the x and y locations of each point in the "mean face"
         xs = []
         ys = []
+
+        #For each point in mean face, find the keypoint with that name and add it to xs and ys
+        '''
+        Note: Finding keypoints by getting the name and then finding idx of that name is
+        roundabout, but it is protected against index out of bounds errors.
+        '''
         for idx in TRACKED:
             name = KEYPOINT_NAMES[idx]
             if pose.FindKeypoint(name) >= 0:
@@ -82,28 +59,30 @@ while (1):
         y_deriv = center_y - prev_y
         prev_y = center_y
 
+        #Threshold on the current derivative with the extra condition
         if np.all([i < THRESHOLD for i in prev_3_deriv]) and y_deriv > THRESHOLD:
             print("DUCK")
+
+            #Duck command needs to be held down
             keyboard.press(Key.down)
             time.sleep(0.01)
-            #keyboard.release(Key.down)
+
         elif np.all([i < THRESHOLD for i in prev_3_deriv]) and y_deriv < -1*THRESHOLD:
             print("JUMP")
+
+            #Jump command needs to be pressed and released
             keyboard.release(Key.down)
             keyboard.press(Key.up)
             time.sleep(0.01)
             keyboard.release(Key.up)
         
+        #Prev_3_deriv is unordered for tracking last three points.
+        #(queue)
         prev_3_deriv[prev_3_loc_index] = np.abs(y_deriv)
         prev_3_loc_index = (prev_3_loc_index + 1)%3
 
-
-        
-
-        
-
+    #Uncomment these lines to use the plotting tracker.
     #print(f"Tracked center = ({center_x},{center_y})")
-
     #track_y.append(center_y)
 
     # render the image
@@ -112,13 +91,11 @@ while (1):
     # update the title bar
     output.SetStatus("{:s} | Network {:.0f} FPS".format("Pose Detection", net.GetNetworkFPS()))
 
-    # print out performance info
-    #net.PrintProfilerTimes()
-
     # exit on input/output EOS
     if not input.IsStreaming() or not output.IsStreaming():
         break
 
+#Quick plotting to determine thresholding parameters
 '''
 plt.figure()
 plt.plot(track_y)
