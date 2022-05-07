@@ -21,15 +21,30 @@
 
 % Pages are numbered in submission mode, and unnumbered in camera-ready
 %\ifcvprfinal\pagestyle{empty}\fi
-\setcounter{page}{4321}
+\setcounter{page}{1}
 
 \begin{document}
 
-\title{Human Motion Interface for Video Game Control}
+\title{Human Pose Estimation for Video Game Control}
+\author{Rakesh Johny, Tom Li, Aditya Narayanan, Albert Xia}
 \maketitle
 
-\section{Problem Description}
-The human-computer interface behind many modern video games, uses either handheld 
+\begin{abstract}
+    Current methods of interacting with computers are flawed in a 
+    couple of key ways: they fail to map physically-intuitive motions to their computer 
+    control counterparts, and they rely heavily on a user's fine-motor skills, 
+    which are heavily impacted by factors such as muscle coordination disabilities 
+    and old age. In this paper, we propose a system of computer control through 
+    gesture tracking via real-time human pose estimation on an embedded device, 
+    which is capable of addresssing these issues, by mapping general physically-intuitive 
+    motions into computer control. Furthermore, our device boasts low latency in 
+    the human-computer interaction, and is minimally intrustive to the computer being 
+    controlled. We test the viability of our system as a computer-control device by playing two 
+    video games using only gestures.
+\end{abstract}
+
+\section{Introduction}
+The human-computer interfaces behind many modern video games use either handheld 
 joystick controllers or keyboard and mouse input, which are examples
 of typical human input device for computers, monitors, televisions, etc. There are two 
 major drawbacks to traditional human input systems that are often overlooked: the input needed 
@@ -37,14 +52,15 @@ to achieve a certain effect has little to no correspondence to a physically-intu
 of motions, and more importantly, inputs are heavily dependent on the user's fine motor skills. 
 Fine motor skills used to interact with modern technology are heavily affected by factors such 
 as muscular coordination disorders and old age. Computer vision, particularly the processes 
-of motion tracking and human pose estimation, may allow us to create human-computer interfaces 
-that link effect to physically-intuitive human motion inputs with little dependence on 
-fine motor ability or additional physical input devices. We propose a vision-based computer-input system that maps gestures and 
-motion of the user's body into computer input. We also propose a car-racing simulator as a test 
-subject for our system, and aim to intuitively control the motion of a player's virtual car 
-with human body motion as the only action. Such a system would be instrumental in improving 
-the accessibility of modern technology, with implementations far beyond the scope of computer 
-games.
+of human pose estimation and motion tracking may allow us to create human-computer interfaces 
+that link computer control to physically-intuitive human motion inputs with little dependence on 
+fine motor ability or additional physical input devices. We propose a vision-based computer-input 
+system that maps gestures and motion of the user's body into computer input. We test the system's 
+effectiveness with the playability of two simple video games as metrics. In order to demonstrate 
+the versatility of our phased-approach to gesture-based control, we select a car-racing game and 
+the Google Chrome Dino Racer game as test video games. Such a system, when expanded to replicating 
+general keyboard + mouse control, would be instrumental in improving the accessibility of 
+modern technology, with implementations far beyond the scope of computer games.
 
 \section{Related Work}
 \subsection{Human Pose Estimation}
@@ -115,18 +131,9 @@ corresponding classification from step 2 to an "intermediate control" which is s
 joystick/keyboard/mouse input that would produce the same output from the game, and implement 
 simple keyboard control with Python to feed that input to the video game.
 
-\section{Timeline}
-We adopt an eight-week timeline for the development and documentation of this project, outlined 
-more specifically below:
-\begin{itemize}
-    \item Week 0: Configure openpose to identify feature points from front and/or side cameras.
-    \item Week 1: Perform any necessary optimizations to run openpose with as low latency as possible.
-    \item Week 2: Finalize the set of trackable and detectable gestures, and map each one to a particular keyboard mapping in a physically-intuitive way.
-    \item Week 3-4: Implement a real-time feature tracking system, and confirm that each gesture accurately corresponds to a specific function with sufficient accuracy.
-    \item Week 5: Interface detections with video game.
-    \item Week 6: Optimize vision video game interaction for low latency.
-    \item Week 7: Write paper describing project methodology, and explore future works inspired by this project.
-\end{itemize}
+\section{Results}
+
+\section{Future Works}
 
 {\small
 \bibliographystyle{ieee_fullname}
