@@ -70,12 +70,16 @@ Pose Estimation or the ability to properly:
 \begin{itemize}
     \item Identify users as sources of input, from a video stream
     \item Segment the user's body to isolate relevant portions of data
-    \item Compute location information about the user's body from relevant portions of data.
+    \item Compute the location, in image coordinates, of keypoints on the user's body.
 \end{itemize}
 
-The area of Human Pose Estimation is widely studied. Robust, optimized solutions exist 
-that can help us with this step. One popular solution is derived from \cite{8765346} which uses Part Affinity Fields (PAFs) to learn to assosciate body parts with individuals in the image, and 
-open-source code for the so called openpose library shows promising results for real-time 
+The area of Human Pose Estimation is widely studied. There are a wide array of robust, optimized 
+solutions for gathering 2D image coordinates of keypoints from images of users. 
+
+\subsubsection{Openpose}
+One popular solution to realtime human pose estimation, derived from \cite{8765346}, 
+uses Part Affinity Fields (PAFs) to learn to assosciate body parts with individuals in the image, 
+and open-source code for the so called openpose library shows promising results for real-time 
 human body segmentation. 
 
 \begin{figure}[h]
@@ -84,17 +88,27 @@ human body segmentation.
     \caption{A demonstration of openpose performing human body segmentation.}
 \end{figure}
 
+\subsubsection{MoveNet and PoseNet}
+
+PoseNet and its more recent counterpart MoveNet are fully convolutional neural network pose 
+estimators built on existing ResNet or MobileNet backbones (citation here). Benchmarks of PoseNet and MoveNet show that it is 
+viable to run either estimator in real time on embedded devices with appropriate 
+model quantizations (citation here), with PoseNet being slightly faster when compared to MoveNet at identical 
+levels of quantization. In comparison's with Openpose, PoseNet/MoveNet are shown to perform 
+slightly better on instance segmentation of the person class from the COCO dataset.
+
 \subsection{Gesture Identification/Motion Tracking}
-\cite{8765346} and Openpose give us promising ways to identify locations of human body features 
+Openpose and MoveNet/PoseNet give us promising ways to identify locations of human body features 
 (hands, arms, etc.) in a video stream. However, this is not enough to categorize a user's motion 
-as a particular input. To be able to extract feature motion over time as a useful input to our 
-car racing video game, we will have to implement motion tracking over a video stream. 
+as a particular command to a computer system. To be able to extract feature motion over time 
+as a useful input to our car racing video game, we will have to implement motion tracking 
+over a video stream.\\ 
 
 A number of guides exist for implementing feature tracking over video. \cite{tracking_1} 
 and \cite{tracking_2} demonstrate simple object tracking across video frames, and \cite{tracking_2} 
-demonstrates a system shown to be accurate with motion of hands. Implementing a similar system for 
-tracking arbitrary features of the human body obtained from human pose estimation should provide 
-adequate results.
+demonstrates a system shown to be accurate with motion of hands. We drew on \cite{tracking_1} and 
+\cite{tracking_2} in developing a tracking algorithm for the identification of a human user ducking 
+or jumping from a keypoint cloud.
 
 \section{Methodology}
 Our human computer interface will consist of three major steps: Pose Estimation, or feature 
