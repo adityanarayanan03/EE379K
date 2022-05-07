@@ -166,23 +166,94 @@ to play the games. Such an embedded device would ideally be compact yet powerful
 quantized versions of pose estimators in real time. We found the NVIDIA Jetson Nano to be an 
 ideal candidate for such an embedded device.\\
 
-With a 128-core NVIDIA GPU on a single-board computer footprint, the Jetson Nano is a popular 
+With a 128-core NVIDIA GPU on a single-board footprint, the Jetson Nano is a popular 
 choice for deep model inference on embedded computers. Perhaps more important than the hardware 
 itself, however, is the specific Tensor RT optimized models available for use on the Jetson Nano. 
 Through a number of optimization techniques such as model quantization, unuzed output elimination 
 and horizontal layer fusion/layer aggregation, the Tensorflow with Tensor RT (TF-TRT) backend is 
 able to greatly improve inference time on the Jetson Nano. TF-TRT is able to output optimized 
 models from Open Neural Network Exchange Format (ONXX) and for popular tasks such as human pose 
-estimation, ONXX model formats are readily available from NVIDIA Developers. 
+estimation, ONXX model formats are readily available from NVIDIA Developers.\\
 
-\subsection{Pose Estimation}
 Using a variant of PoseNet built on a ResNet-18 backbone, we observe 15-17 Frames Per Second 
 (FPS) on the Jetson Nano. The so called Pose-ResNet-18-body outputs 17 detected keypoints in 
 image coordinate format. 15-17 FPS performance is smooth enough keypoint detection to allow us to 
-play these simple games in real time.
+play games in real time.
+
+\subsection{Pose Estimation}
+After testing the variety of available solutions for human pose estimation 
+above, we identify that running TRT optimized PoseNet through the Jetson Nano 
+is the best solution for our application.\\
+
+To build the first phase of our human-computer interaction device, we use the 
+jetson-inference and jetson-utils python packages (citation here) 
+to build a human pose estimator in Python. The output of this step is a 
+collection of 2D keypoints, correpsonding to image coordinates of the locations 
+of the 17 body parts detected by PoseNet.
 
 \subsection{Feature Tracking and Classification}
+The second major phase of the human-computer interaction device are the 
+keypoint classifiers, which receive 2d image coordinates keypoint detections 
+from the pose estimator, and classify collections of keypoints into computer 
+commands in a game-specific way. In a fully generalized model of our 
+human-computer interaction device, the keypoint "decoder" built in this step 
+need not even be a classifier. For more complicated continuous inputs to 
+video games, this can be a more complicated regression problem as we would 
+seek to estimate continuous output based on the locations of human pose 
+keypoints.\\
+
+We construct two distinct keypoint classifiers, one for each video game we 
+demonstrate our system on. We construct one classifier to derive a steering 
+command from pose keypoints, and one to derive jumping/ducking information 
+from an identical set of keypoints.
+
 \subsubsection{Feature Classification For Steering}
+The first of two example video games we play as demonstrations of our 
+human-computer interface is a simple car-racing game, in which the player's 
+vehicle must dodge obstacles by steering left and right. The video game 
+accepts controls as either left arrow key or right arrow key, so our 
+keypoint classifier for this game seeks to classify collections of keypoints 
+derived from our human pose estimator into either steer left or steer right 
+commands.\\
+
+To maintain a physical intuition to the gestures that are mapped to either 
+left arrow key or right arrow key, we require a user to steer the car with 
+an imaginary steering wheel on the video stream. From each frame of the user's 
+hands on an imaginary wheel, we extract classifications for the game control 
+as follows:
+
+\begin{enumerate}
+    \item Assert that both the left wrist and right wrist of the user on the 
+        imaginary wheel are present in the frame. If one or more wrists are 
+        not present in the frame, skip the remaining steps and output no 
+        steering command.
+    \item Compute the vector connecting the left wrist of the user to the 
+        right wrist of the user.
+    \item Compute the angle to the horizontal of the vector computed in step 2.
+    \item Threshold on the angle to the horizontal with an experimentally 
+        determined cutoff threshold.
+\end{enumerate}
+
+Let the location (in image coordinates) of the user's left wrist be $(x,y)$ and 
+the location of the user's right wrist be $(x', y')$. The displacement vector 
+connecting the two wrists is given by:
+
+$$d = (x - x', y - y')$$
+
+The angle to the horizontal is then given by:
+
+$$\theta = \arctan{\frac{y-y'}{x-x'}}$$
+
+After some experimentation with the system, we found that a reasonable threshold 
+for the steering angle is $0.2$ radians. Our classifications for steering angle 
+are then derived as:
+
+\begin{itemize}
+    \item $\theta > 0.2$: Steer left
+    \item $-0.2 < \theta < 0.2$: No command
+    \item $-0.2 < \theta$: Steer Right
+\end{itemize}
+
 \subsubsection{Feature Classification For Jumping/Ducking} 
 
 \subsection{Game Interface}
