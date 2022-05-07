@@ -111,43 +111,85 @@ demonstrates a system shown to be accurate with motion of hands. We drew on \cit
 or jumping from a keypoint cloud.
 
 \section{Methodology}
-Our human computer interface will consist of three major steps: Pose Estimation, or feature 
-location, Feature Tracking and classification of motions, and video game interfacing. Each one 
-is detailed below. All code will be written in Python.
+Our human computer interface consists of three major steps: Pose Estimation, or feature 
+location, Feature Tracking and classification of motions, and video game interfacing. In addition, 
+we adopt a multi-phased approach to our human computer interface. Phase 1 consists of a robust and 
+general human pose estimator and keypoint detector. The work in Phase 1 is task/game agnostic, as 
+we implement identical versions of this phase for the car-racer game as well as the chrome 
+dinosaur game. Phase 2 is a game-specific keypoint classifier, where the output from Phase 1 is 
+classified into a number of computer commands in a way dependent on the physical motions being 
+replicated in the game as well as the computer commands the game is traditionally played with.\\
+
+The motivation behind such a two phase approach rather than building a classifier that directly 
+maps input video streams to computer commands is to improve the versatility of our human-computer 
+interaction system. A fully general Phase 1 implemented independent of the game in question allows 
+the system to be more easily adapted to any particular set of computer commands. We demonstrate the 
+versatility of this system through the implementation of our human-computer interface for two 
+distinct video games that utilize identical Phase 1 code.
+
+\subsection{Testing Pose Estimation Methods}
+Before we develop phase 1 of our human-computer interface, we test a number of proposed solutions 
+for human pose estimation to determine which ones are best-suited to our needs. The main criteria 
+we require for our human pose estimator are:
+
+\begin{itemize}
+    \item Real time operation. The need for this criterion is obvious, as we require low latency 
+        classification in order to mimic low-latency commmands for video games. Essentially, the user 
+        should feel as if the delay between executing a physical command and the video game reflecting 
+        such a command is instantaneous.
+    \item The system should be minimally intrusive on the computer used to play the game. This 
+        essentially means that we cannot use computing resources so significant that usability of 
+        the computer itself is diminished. 
+\end{itemize}
+
+\subsubsection{Openpose Python API}
+The openpose package offers a Python API for implementing inference over video feeds using one 
+of the openpose models. We began testing the openpose Python API for our task, but found that 
+installing the API resulted in dependency issues accross multiple team members' computers and 
+decided to instead test the openpose pretrained models implemented independently of the openpose 
+python API.
+
+%https://learnopencv.com/deep-learning-based-human-pose-estimation-using-opencv-cpp-python/
+\subsubsection{Openpose model implemented in OpenCV}
+(citation) offers a method to perform inference on CPU/GPU using pretrained versions of the 
+openpose hand/body pose estimators. For inference with the openpose pretrained model through 
+OpenCV, we observed only 1-2 FPS on a 2.3 GHz Intel i9 CPU. We expect that running the same model 
+with CUDA acceleration would result in true real-time performance, but as one of our design 
+constraints for our system, we imposed that we cannot use significant GPU resources in order to 
+maintain minimal intrusiveness onto the gaming machine.
+
+\subsubsection{PoseNet and the Jetson Nano}
+Due to the poor performance of the Openpose models, we began to look at different methods for 
+real-time pose estimation. One option that was promising was to completely offload the task of 
+human pose estimation to an edge-device to reduce the computational burden on the device used 
+to play the games. Such an embedded device would ideally be compact yet powerful enough to run 
+quantized versions of pose estimators in real time. We found the NVIDIA Jetson Nano to be an 
+ideal candidate for such an embedded device.\\
+
+With a 128-core NVIDIA GPU on a single-board computer footprint, the Jetson Nano is a popular 
+choice for deep model inference on embedded computers. Perhaps more important than the hardware 
+itself, however, is the specific Tensor RT optimized models available for use on the Jetson Nano. 
+Through a number of optimization techniques such as model quantization, unuzed output elimination 
+and horizontal layer fusion/layer aggregation, the Tensorflow with Tensor RT (TF-TRT) backend is 
+able to greatly improve inference time on the Jetson Nano. TF-TRT is able to output optimized 
+models from Open Neural Network Exchange Format (ONXX) and for popular tasks such as human pose 
+estimation, ONXX model formats are readily available from NVIDIA Developers. 
 
 \subsection{Pose Estimation}
-The first step of our human computer interface pipeline is the pose estimation step, in which 
-we use openpose to locate certain key features of the user. What constitutes a key feature will 
-be determined when the set of video game controls we must mimic is properly defined. Possible 
-key features include the location of the user's wrists, elbows, or the angles of various limbs. 
+Using a variant of PoseNet built on a ResNet-18 backbone, we observe 15-17 Frames Per Second 
+(FPS) on the Jetson Nano. The so called Pose-ResNet-18-body outputs 17 detected keypoints in 
+image coordinate format. 15-17 FPS performance is smooth enough keypoint detection to allow us to 
+play these simple games in real time.
 
-During this step we will also determine the computational cost of openpose and make decisions on 
-how to proceed based on the results. If openpose is able to run with sufficiently low latency, we 
-move on to feature tracking, but if openpose demonstrates a high latency, we will explore other 
-methods of pose estimation, or methods of improving the performance of openpose using by decreasing 
-framerates or image resolutions.
-
-\subsection{Feature Tracking}
-Obtaining the locations of various important features is only the first step towards identifying 
-physically-meaningful actions of the user. In order for the user to be able to signal various 
-commands within the video game, we must track the previously obtained features over time and 
-classify the user's behavior into one of a few possible actions. For example, mimicing a car 
-racing game, the set of possible actions could be \{No command, accelerate, decelerate, steer\}. 
-Each of these commands or classifications will also have a value associated with it corresponding 
-to its magnitude, which will also be obtained directly from feature locations. For example, a steering 
-command mapped to the user rotating their torso would have a steering value associated with it 
-derived from the angle through which the user has turned. 
+\subsection{Feature Tracking and Classification}
+\subsubsection{Feature Classification For Steering}
+\subsubsection{Feature Classification For Jumping/Ducking} 
 
 \subsection{Game Interface}
-The third and final major step of our methodology is to turn the classifications obtained from 
-the Feature Tracking step and feed them to a video game as user input. We will simply map each 
-corresponding classification from step 2 to an "intermediate control" which is simply the 
-joystick/keyboard/mouse input that would produce the same output from the game, and implement 
-simple keyboard control with Python to feed that input to the video game.
 
 \section{Results}
 
-\section{Future Works}
+\section{Conclusion and Future Works}
 
 {\small
 \bibliographystyle{ieee_fullname}
