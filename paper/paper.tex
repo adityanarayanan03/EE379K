@@ -255,6 +255,90 @@ are then derived as:
 \end{itemize}
 
 \subsubsection{Feature Classification For Jumping/Ducking} 
+The second example video game we demonstrate our human-computer interface system 
+on is the Google Chrome Dinosaur Game. The game accepts jumping and ducking commands 
+in the form of up arrow key and down arrow key; however, our classifier is a 
+little more complex than for the first example video game, as ducking and jumping 
+require motion tracking over video to properly classify from human motion. That is, 
+you cannot determine from a single frame of video whether or not the user is 
+ducking or jumping.\\
+
+In order to deisgn an appropriate classifier for this task, we first establish 
+a subset of the keypoints as a more descriptive feature to track. In the case of 
+the car steering example, this was done by reducing the set of keypoints to simply 
+the left wrist and right wrist. For classification of jumping and ducking, this is 
+accomplished by computing a "mean face" or the midpoint of a number of selected 
+keypoints. For this application, we select the two eyes, two ears, and the nose, 
+and compute the midpoint of these keypoints as our augmented feature to track in 
+order to classify whether a user is jumping or ducking. The motivation for establishing 
+this feature is to improve the robustness of our classification. Were we to simply 
+track a single keypoint such as the nose of the user, our system would not be 
+stable against random errors when the nose may not be properly classified or 
+may not be classified at all from the phase 1 human pose estimation. Running 
+relatively small versions of PoseNet, these types of errors are fairly common. 
+Establishing the midpoint of the face as a feature to track allows us to track 
+an equally useful but more robust feature.\\
+
+After establishing the midpoint feature, we obtain graphs of the vertical 
+position and derivative of vertical position of the midpoint feature over time 
+as a user performs jumping and ducking motions in order to develop a game-specific 
+classifier for this task. A few methods we considered and our analysis of them 
+are given below:
+
+\begin{enumerate}
+    \item \textbf{Thresholding on Position}: The most simple method we could 
+        employ to classify the movement of the midpoint face into either jumping 
+        or ducking would be to threshold on the vertical position in the frame 
+        of the midpoint of the users's face. However, this system is not invariant 
+        to small motions of the user between jumps and ducks. For example, if the 
+        user moves closer to or farther from the camera, this method breaks down.
+    \item \textbf{Threshold on Derivative}: One method we considered would be 
+        to simply threshold on the derivative of the y-position to discriminate 
+        between periods of slow/no motion, and those where the user rapidly moves 
+        up or down as one would during a jump or a duck. However, as we can see from 
+        the graphs of the derivative over time, both jumps and ducks have periods of 
+        high derivative in both the positive and negative direction. i.e) thresholding 
+        on the deriviatve is not enough to discriminate between a duck and a jump, although 
+        it can discriminate between jump/duck and no command.
+    \item \textbf{Template Matching}: From the graph of the derivative over time, we can 
+        see that a jump and a duck have inverted profiles on the graph. If we compute 
+        the correlation between a template graph for a jump/duck and the current 
+        graph at all timesteps, we would be able to discriminate between a jump and 
+        a duck effectively. However, this method cannot be used in real time. As we can 
+        see from either graph, a jump/duck occupies a significant portion of time. Computing 
+        the correlation between a template feature and the motion of the midpoint face 
+        in real time would only result in classification at the end of a jump or duck, which 
+        would introduct unwanted latency into the system.
+    \item \textbf{Threshold on Derivative with extra constraint}: The 
+        method we implement in our system is a modification of simply thresholding on 
+        the derivative of the y position. We threshold on the vertical position, with 
+        the added constraint that at any time $t$, for the sample at that time to be 
+        classified as a jump or a duck, the previous $N$ samples of the 
+        derivative must be below the threshold. This ensures that only the 
+        first period of rapid change in the motion of the midpoint face is 
+        captured as a command. $N$ and the threshold are tunable parameters, 
+        and in our final system, we set the threshold = $10$ pixels/sec and 
+        $N = 3$.
+\end{enumerate}
+
+The final solution we implement for our feature tracking/classification for 
+the Chrome dino game is as follows:
+
+\begin{enumerate}
+    \item For every frame of video, compute $y_t$, the midpoint of all keypoints 
+        existing in the frame from the set 
+        \{left eye, right eye, left ear, right ear, nose\}.
+    \item Compute $y'_t$, the difference of $y_t$ and $y_{t-1}$.
+    \item If $y'_t > 10, y'_{t-1} < 10, y'_{t-2} < 10$ and $y'_{t-3} < 10$: 
+        Classify current frame as a duck.
+    \item If $y'_t < 10, y'_{t-1} < 10, y'_{t-2} < 10$ and $y'_{t-3} < 10$:
+        Classify current frame as a jump.
+    \item If none of the above conditions are satisfied, classify current frame as 
+        no command.
+\end{enumerate}
+
+\textit{Note that $y' > 10$ corresponds to a duck and $y' < 10$ corresponds 
+to a jump as the image coordinates are zeroed at the top left of the frame.}
 
 \subsection{Game Interface}
 
