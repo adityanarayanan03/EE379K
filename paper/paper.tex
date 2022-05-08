@@ -127,6 +127,13 @@ the system to be more easily adapted to any particular set of computer commands.
 versatility of this system through the implementation of our human-computer interface for two 
 distinct video games that utilize identical Phase 1 code.
 
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = .8\linewidth]{images/flow_chart.png}
+    \caption{Data flow within our human-computer interface system. Note 
+    the use of a universal pose estimator and game-specific classifiers.}
+\end{figure}
+
 \subsection{Testing Pose Estimation Methods}
 Before we develop phase 1 of our human-computer interface, we test a number of proposed solutions 
 for human pose estimation to determine which ones are best-suited to our needs. The main criteria 
@@ -189,7 +196,14 @@ To build the first phase of our human-computer interaction device, we use the
 jetson-inference and jetson-utils python packages (\cite{jetsonInference}) 
 to build a human pose estimator in Python. The output of this step is a 
 collection of 2D keypoints, correpsonding to image coordinates of the locations 
-of the 17 body parts detected by PoseNet.
+of the 17 body parts detected by PoseNet.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = .8\linewidth]{images/pose_estimations.jpg}
+    \caption{An example of the keypoints detected from a frame of video
+    by Pose-ResNet-18}
+\end{figure}
 
 \subsection{Feature Tracking and Classification}
 The second major phase of the human-computer interaction device are the 
