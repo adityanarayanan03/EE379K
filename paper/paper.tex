@@ -91,9 +91,9 @@ human body segmentation.
 \subsubsection{MoveNet and PoseNet}
 
 PoseNet and its more recent counterpart MoveNet are fully convolutional neural network pose 
-estimators built on existing ResNet or MobileNet backbones (citation here). Benchmarks of PoseNet and MoveNet show that it is 
+estimators built on existing ResNet or MobileNet backbones \cite{PoseNet}. Benchmarks of PoseNet and MoveNet show that it is 
 viable to run either estimator in real time on embedded devices with appropriate 
-model quantizations (citation here), with PoseNet being slightly faster when compared to MoveNet at identical 
+model quantizations \cite{tensorflowPoseNet}, with PoseNet being slightly faster when compared to MoveNet at identical 
 levels of quantization. In comparison's with Openpose, PoseNet/MoveNet are shown to perform 
 slightly better on instance segmentation of the person class from the COCO dataset.
 
@@ -151,7 +151,7 @@ python API.
 
 %https://learnopencv.com/deep-learning-based-human-pose-estimation-using-opencv-cpp-python/
 \subsubsection{Openpose model implemented in OpenCV}
-(citation) offers a method to perform inference on CPU/GPU using pretrained versions of the 
+\cite{opencvPose} offers a method to perform inference on CPU/GPU using pretrained versions of the 
 openpose hand/body pose estimators. For inference with the openpose pretrained model through 
 OpenCV, we observed only 1-2 FPS on a 2.3 GHz Intel i9 CPU. We expect that running the same model 
 with CUDA acceleration would result in true real-time performance, but as one of our design 
@@ -186,7 +186,7 @@ above, we identify that running TRT optimized PoseNet through the Jetson Nano
 is the best solution for our application.\\
 
 To build the first phase of our human-computer interaction device, we use the 
-jetson-inference and jetson-utils python packages (citation here) 
+jetson-inference and jetson-utils python packages (\cite{jetsonInference}) 
 to build a human pose estimator in Python. The output of this step is a 
 collection of 2D keypoints, correpsonding to image coordinates of the locations 
 of the 17 body parts detected by PoseNet.
@@ -389,7 +389,7 @@ human-computer interface only as an intermediate step.
 
 {\small
 \bibliographystyle{ieee_fullname}
-\bibliography{proposal_bib}
+\bibliography{report_bib}
 }
 
 \end{document}
