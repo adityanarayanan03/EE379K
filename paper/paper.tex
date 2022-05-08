@@ -342,6 +342,17 @@ the Chrome dino game is as follows:
 to a jump as the image coordinates are zeroed at the top left of the frame.}
 
 \subsection{Game Interface}
+The final step before our human-computer interaction system is fully functional 
+is to simulate keypresses to play the two example games selected. In this project 
+we select simple example games that can be run on the Jetson Nano within a browser 
+or through pyGame. However, the system was designed so that during this phase, the 
+Jetson Nano will send data to a game console machine either through serial 
+communication or wirelessly through bluetooth/wifi communication to play more 
+intensive games on a dedicated machine.\\
+
+In order to simulate keypresses, we utilize a Python package known as pynput, 
+which allows us to press and release arrow keys at the appropriate times in order 
+to simulate keypresses to the example video games.
 
 \section{Results}
 
