@@ -325,7 +325,8 @@ The final solution we implement for our feature tracking/classification for
 the Chrome dino game is as follows:
 
 \begin{enumerate}
-    \item For every frame of video, compute $y_t$, the midpoint of all keypoints 
+    \item For every frame of video, compute $y_t$, the midpoint of y-components 
+    of all keypoints 
         existing in the frame from the set 
         \{left eye, right eye, left ear, right ear, nose\}.
     \item Compute $y'_t$, the difference of $y_t$ and $y_{t-1}$.
