@@ -346,7 +346,7 @@ The final step before our human-computer interaction system is fully functional
 is to simulate keypresses to play the two example games selected. In this project 
 we select simple example games that can be run on the Jetson Nano within a browser 
 or through pyGame. However, the system was designed so that during this phase, the 
-Jetson Nano will send data to a game console machine either through serial 
+Jetson Nano could send data to a game console machine either through serial 
 communication or wirelessly through bluetooth/wifi communication to play more 
 intensive games on a dedicated machine.\\
 
@@ -355,8 +355,37 @@ which allows us to press and release arrow keys at the appropriate times in orde
 to simulate keypresses to the example video games.
 
 \section{Results}
+Once the human pose estimator, keypoint classifiers, and game interface are integrated into 
+a single system, we are able to play both of our example games in real time (15+ FPS) through only our 
+gestures in front of the camera. Our systems are robust, performing well across a variety of scenarios, 
+including when keypoints are missing and erroneous pose estimation. The games are responsive and 
+fully playable from only gestural input, demonstrating little to no loss of playability when 
+moving from keyboard and mouse input to the gestural command input through our human-computer 
+interface device.\\
 
 \section{Conclusion and Future Works}
+The goal of this project was to develop a system that can map human gestures through a video 
+stream into usable computer command input, replacing how we currently interact with computers 
+through keyboards, mice, and joysticks. Furthermore, we aimed to develop a system that 
+places little to no computational expense on the computer playing the game. 
+Our system demonstrates that we accomplish this goal 
+in real time, by playing two example video games using gestural inputs, with computation 
+and realtime inference done on an edge device, the NVIDIA Jetson Nano.\\
+
+In developing and testing this system, we note a few major areas in which the system can 
+be improved in the future. We notice that pose estimations using PoseNet on the Jetson nano 
+fails to detect keypoints around the wrist dependent on the position and condition of the user's 
+hands. We notice that detection is more stable over time when the user's hands are open rather than in the 
+closed fist position, although keypoints are still correctly identified in both positions. One 
+area of future work that can address this problem is to retrain pose estimation models using a 
+custom dataset with more examples of situations such as mimicing steering motions.\\
+
+Other areas of future work that can improve our system and bring it closer to the goal of a 
+general purpose human computer interface that can mimic a wider range of commands include more 
+general keypoint classifiers using machine learning techniques that can be easily expanded 
+to a wider range of commands. In addition, a communication link between the Jetson Nano and 
+a gaming device can be implemented, allowing the user to play games on other devices, using our 
+human-computer interface only as an intermediate step.
 
 {\small
 \bibliographystyle{ieee_fullname}
