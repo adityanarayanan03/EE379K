@@ -31,7 +31,7 @@
 
 \begin{abstract}
     Current methods of interacting with computers are flawed in a 
-    couple of key ways: they fail to map physically-intuitive motions to their computer 
+    couple of key ways, especially when it comes to video games: they fail to map physically-intuitive motions to their computer 
     control counterparts, and they rely heavily on a user's fine-motor skills, 
     which are heavily impacted by factors such as muscle coordination disabilities 
     and old age. In this paper, we propose a system of computer control through 
@@ -80,7 +80,7 @@ solutions for gathering 2D image coordinates of keypoints from images of users.
 One popular solution to realtime human pose estimation, derived from \cite{8765346}, 
 uses Part Affinity Fields (PAFs) to learn to assosciate body parts with individuals in the image, 
 and open-source code for the so called openpose library shows promising results for real-time 
-human body segmentation. 
+multi-person 2D pose detection, including body, foot, hand, and facial keypoints. 
 
 \begin{figure}[h]
     \centering
@@ -106,7 +106,7 @@ over a video stream.\\
 
 A number of guides exist for implementing feature tracking over video. \cite{tracking_1} 
 and \cite{tracking_2} demonstrate simple object tracking across video frames, and \cite{tracking_2} 
-demonstrates a system shown to be accurate with motion of hands. We drew on \cite{tracking_1} and 
+demonstrates a system shown to be accurate with motion of hands.This is done by calculating the changes between consecutive frames and finding trends in a window of input data. We drew on \cite{tracking_1} and 
 \cite{tracking_2} in developing a tracking algorithm for the identification of a human user ducking 
 or jumping from a keypoint cloud.
 
@@ -384,7 +384,12 @@ including when keypoints are missing and erroneous pose estimation. The games ar
 fully playable from only gestural input, demonstrating little to no loss of playability when 
 moving from keyboard and mouse input to the gestural command input through our human-computer 
 interface device.\\
-
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = .5\linewidth,height=4cm]{images/user.png}\hfill
+    \includegraphics[width = .5\linewidth,height=4cm]{images/game.png}
+    \caption{Real-time game play using our interface}
+\end{figure}
 \section{Conclusion and Future Works}
 The goal of this project was to develop a system that can map human gestures through a video 
 stream into usable computer command input, replacing how we currently interact with computers 
@@ -405,7 +410,8 @@ custom dataset with more examples of situations such as mimicing steering motion
 Other areas of future work that can improve our system and bring it closer to the goal of a 
 general purpose human computer interface that can mimic a wider range of commands include more 
 general keypoint classifiers using machine learning techniques that can be easily expanded 
-to a wider range of commands. In addition, a communication link between the Jetson Nano and 
+to a wider range of commands. As an immediate next step, we could develop kepoint classifiers that are specific to a video game genre (such as RPGs or shooters) rather than a sepcific game.
+In addition, a communication link between the Jetson Nano and 
 a gaming device can be implemented, allowing the user to play games on other devices, using our 
 human-computer interface only as an intermediate step.
 
