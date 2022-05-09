@@ -32,7 +32,7 @@
 \begin{abstract}
     Current methods of interacting with computers are flawed in a 
     couple of key ways, especially when it comes to video games: they fail to map physically-intuitive motions to their computer 
-    control counterparts, and they rely heavily on a user's fine-motor skills, 
+    control counterparts, and they rely on a user's fine-motor skills, 
     which are heavily impacted by factors such as muscle coordination disabilities 
     and old age. In this paper, we propose a system of computer control through 
     gesture tracking via real-time human pose estimation on an embedded device, 
@@ -52,7 +52,7 @@ to achieve a certain effect has little to no correspondence to a physically-intu
 of motions, and more importantly, inputs are heavily dependent on the user's fine motor skills. 
 Fine motor skills used to interact with modern technology are heavily affected by factors such 
 as muscular coordination disorders and old age. Computer vision, particularly the processes 
-of human pose estimation and motion tracking may allow us to create human-computer interfaces 
+of human pose estimation and motion tracking, may allow us to create human-computer interfaces 
 that link computer control to physically-intuitive human motion inputs with little dependence on 
 fine motor ability or additional physical input devices. We propose a vision-based computer-input 
 system that maps gestures and motion of the user's body into computer input. We test the system's 
@@ -181,6 +181,13 @@ and horizontal layer fusion/layer aggregation, the Tensorflow with Tensor RT (TF
 able to greatly improve inference time on the Jetson Nano. TF-TRT is able to output optimized 
 models from Open Neural Network Exchange Format (ONXX) and for popular tasks such as human pose 
 estimation, ONXX model formats are readily available from NVIDIA Developers.\\
+
+\begin{figure}
+    \centering
+    \includegraphics[width = .6\linewidth]{images/jetson_nano.jpg}
+    \caption{NVIDIA Jetson Nano, a single-board computer capable of 
+    low-latency deep model inference.}
+\end{figure}
 
 Using a variant of PoseNet built on a ResNet-18 backbone, we observe 15-17 Frames Per Second 
 (FPS) on the Jetson Nano. The so called Pose-ResNet-18-body outputs 17 detected keypoints in 
